@@ -40,8 +40,9 @@ When the user asks for something, evaluate in one line whether it is **complex**
 **If complex**, do NOT ask whether to follow the flow. Activate:
 1. Announce: "This looks like a complex feature. Activating Matt workflow: /grill-with-docs → /to-spec → /to-tickets → /implement. Starting with grill-with-docs."
 2. Load `/grill-with-docs` and begin the interview.
-3. /grill-with-docs → /to-spec → /to-tickets chains **automatically** — each phase flows into the next without asking. Continuous context helps here.
-4. /to-tickets → /implement is the **manual gate** — STOP and ask before implementing. Each ticket deserves a fresh session.
+3. After EACH phase, STOP and ask whether to proceed: "Grilling done. Sigo con /to-spec?" → "Spec lista. Sigo con /to-tickets?" → "Tickets ready. Arranco /implement con el primer ticket?"
+4. If the user says "automatic", "seguí sin preguntar", or "keep going" → chain the remaining phases without asking.
+5. /to-tickets → /implement is an especially important gate: each ticket deserves a fresh session. Never skip it unless the user explicitly overrides.
 5. If the user interrupts ("stop", "skip", "implement directly", "wayfinder") at any step, respect the interruption.
 
 **Exception — foggy greenfield / huge effort**: if the idea is so large or undefined that the way forward isn't visible at all (greenfield project, massive feature with unknown scope), announce and route to `/wayfinder` instead. Say: "This is too foggy for the main flow — the path isn't visible yet. Activating /wayfinder to chart decision tickets first, then /to-spec once the map is clear."
@@ -64,10 +65,10 @@ Mental router — no need to invoke `/ask-matt` for routing. Load the target ski
 - New idea WITH a codebase → `/grill-with-docs`
 - New idea WITHOUT a codebase → `/grill-me` (use the productivity `grill-me` skill)
 - After grilling, branch: **multi-session build?**
-  - **Yes** → `/to-spec` → `/to-tickets` (automatic chain) → then STOP and ask before `/implement` (manual gate — each ticket in a fresh session)
+  - **Yes** → `/to-spec` → `/to-tickets` → `/implement` (per ticket, fresh context each). **Each phase asks before proceeding** unless the user says "automatic".
   - **No** → `/implement` directly in this context
 - `/implement` drives `/tdd` internally, then runs `/code-review` before committing
-- **Key rule:** grill → spec → tickets flows automatically. implement is ALWAYS a manual gate — never auto-chain into it.
+- **Key rule:** every phase gate asks by default. grill → spec → tickets → implement all require confirmation. Only skip gates if the user explicitly says "automatic" or "keep going".
 
 ### On-ramps (merge onto main flow)
 
