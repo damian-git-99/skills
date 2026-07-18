@@ -64,6 +64,31 @@ Two ways to install, two philosophies:
 - **[skills.sh](https://skills.sh/mattpocock/skills)** copies the skills into your project so you can hack on them and make them your own.
 - **The plugin** keeps them as a read-only, always-current bundle you don't edit — best when you just want my set to work and follow along as it evolves.
 
+## Install as an OpenCode plugin
+
+Add to your `opencode.json` (global or project-level):
+
+```json
+{
+  "plugin": ["mattpocock-skills@git+https://github.com/damian-git-99/skills.git"]
+}
+```
+
+Restart OpenCode. The plugin auto-installs and registers all skills and the `orquestador` primary agent.
+
+To install from a local clone instead:
+
+```json
+{
+  "plugin": ["mattpocock-skills@file:///home/your-user/skills"]
+}
+```
+
+> Use `orquestador` as your default agent to get automatic routing through the engineering workflow:
+> ```json
+> { "default_agent": "orquestador" }
+> ```
+
 > Using Codex or another agent? The [skills.sh installer](https://skills.sh/mattpocock/skills) already installs these skills into Codex and other Agent-Skills-standard harnesses today. A native Codex plugin is on the roadmap — see [`.agents/adr/0002-ship-as-a-claude-code-plugin.md`](./.agents/adr/0002-ship-as-a-claude-code-plugin.md).
 
 ## Why These Skills Exist
