@@ -10,6 +10,11 @@
     "url": "https://github.com/damian-git-99/skills"
   },
   "license": "MIT",
+  "keywords": ["pi-package"],
+  "pi": {
+    "extensions": ["./extensions"],
+    "skills": ["./skills/engineering"]
+  },
   "scripts": {
     "changeset": "changeset",
     "version": "changeset version"
