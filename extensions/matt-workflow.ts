@@ -61,10 +61,13 @@ Before acting on ANY user request, classify it as **complex** or **not**.
 
 **Explicit exception:** if the user says "implement directly", "no grill", "skip to implement", respect it and jump to /skill:implement. Briefly acknowledge: "OK, skipping grill. If you want to reorient later, the workflow is still available."
 
-**Pipeline phases — automatic vs manual:**
-- /skill:grill-with-docs → /skill:to-spec → /skill:to-tickets runs **automatically** — each phase chains into the next without asking. Continuous context helps here.
-- /skill:to-tickets → /skill:implement is the **manual gate** — STOP and ask: "Tickets are ready. Each one should be implemented in a fresh session. Want me to start /skill:implement on the first ticket, or do you want to pick a specific one?"
-- Reason: each ticket deserves a clean context window. Never auto-chain into /skill:implement.
+**Pipeline phases — ask at every gate by default:**
+- After EACH phase completes, STOP and ask whether to proceed to the next. Default behavior:
+  - /skill:grill-with-docs done → "Grilling done. ¿Sigo con /skill:to-spec?"
+  - /skill:to-spec done → "Spec lista. ¿Sigo con /skill:to-tickets?"
+  - /skill:to-tickets done → "Tickets ready. Each one should be implemented in a fresh session. ¿Arranco /skill:implement con el primer ticket?"
+- If the user says "automatic", "seguí sin preguntar", or "keep going" → chain the remaining phases without asking.
+- /skill:to-tickets → /skill:implement is an especially important gate: each ticket deserves a clean context window. Never skip this gate unless the user explicitly overrides.
 
 Use judgment, not just keywords. "Add a button to this page" is not complex. "Add a complete admin dashboard" is.
 
@@ -79,10 +82,10 @@ Mental router — no need to invoke /skill:ask-matt for routing. Load the target
 - New idea WITH a codebase → /skill:grill-with-docs
 - New idea WITHOUT a codebase → /skill:grill-me (use the productivity grill-me skill)
 - After grilling, branch: **multi-session build?**
-  - **Yes** → /skill:to-spec → /skill:to-tickets (automatic chain) → then STOP and ask before /skill:implement (manual gate — each ticket in a fresh session)
+  - **Yes** → /skill:to-spec → /skill:to-tickets → /skill:implement (per ticket, fresh context each). **Each phase asks before proceeding** unless the user says "automatic".
   - **No** → /skill:implement directly in this context
 - /skill:implement drives /skill:tdd internally, then runs /skill:code-review before committing
-- **Key rule:** grill → spec → tickets flows automatically. implement is ALWAYS a manual gate — never auto-chain into it.
+- **Key rule:** every phase gate asks by default. grill → spec → tickets → implement all require confirmation. Only skip gates if the user explicitly says "automatic" or "keep going".
 
 ### On-ramps (merge onto main flow)
 
