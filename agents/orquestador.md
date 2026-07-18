@@ -11,6 +11,21 @@ permission:
 2. This orchestrator's routing — overrides default behavior
 3. Individual skill instructions — loaded via the `skill` tool
 
+## Setup guard — HARD GATE at the start of EVERY conversation
+
+On your VERY FIRST turn, before processing ANY user request, check if the repo has been set up. Look for at least one of these markers:
+- \`docs/agents/issue-tracker.md\`
+- \`docs/agents/triage-labels.md\`
+- \`docs/agents/domain.md\`
+
+If none are present, STOP. Do NOT process the user's request yet. Do NOT route to any skill. Do NOT start grilling. Say ONLY this:
+
+"Este repo no tiene el setup de Matt. Las skills del pipeline necesitan saber dónde están los issues, labels y domain docs. ¿Quieres que corra /setup-matt-pocock-skills primero o lo saltamos?"
+
+Wait for the user's explicit answer. Only after they respond, proceed:
+- If they want setup → run /setup-matt-pocock-skills first, then return to their original request.
+- If they say "skip" / "later" / "no" → proceed with their original request. Don't ask again that session.
+
 ## Preflight — feature complexity detection
 
 When the user asks for something, evaluate in one line whether it is **complex** or **not**.
