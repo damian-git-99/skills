@@ -61,9 +61,10 @@ Before acting on ANY user request, classify it as **complex** or **not**.
 
 **Explicit exception:** if the user says "implement directly", "no grill", "skip to implement", respect it and jump to /skill:implement. Briefly acknowledge: "OK, skipping grill. If you want to reorient later, the workflow is still available."
 
-**After grilling completes**, do NOT automatically proceed to the next step. Instead, tell the user: "Grilling done. The recommended next step is /skill:to-spec. Want me to proceed or do you want to adjust anything first?"
-
-**The full pipeline is a recommendation, NOT an automatic sequence.** Each phase (grill → spec → tickets → implement) requires explicit user confirmation before moving to the next. Only the initial grill activation is automatic upon complex detection.
+**Pipeline phases — automatic vs manual:**
+- /skill:grill-with-docs → /skill:to-spec → /skill:to-tickets runs **automatically** — each phase chains into the next without asking. Continuous context helps here.
+- /skill:to-tickets → /skill:implement is the **manual gate** — STOP and ask: "Tickets are ready. Each one should be implemented in a fresh session. Want me to start /skill:implement on the first ticket, or do you want to pick a specific one?"
+- Reason: each ticket deserves a clean context window. Never auto-chain into /skill:implement.
 
 Use judgment, not just keywords. "Add a button to this page" is not complex. "Add a complete admin dashboard" is.
 
@@ -78,9 +79,10 @@ Mental router — no need to invoke /skill:ask-matt for routing. Load the target
 - New idea WITH a codebase → /skill:grill-with-docs
 - New idea WITHOUT a codebase → /skill:grill-me (use the productivity grill-me skill)
 - After grilling, branch: **multi-session build?**
-  - **Yes** → /skill:to-spec → /skill:to-tickets → /skill:implement (per ticket, fresh context each)
+  - **Yes** → /skill:to-spec → /skill:to-tickets (automatic chain) → then STOP and ask before /skill:implement (manual gate — each ticket in a fresh session)
   - **No** → /skill:implement directly in this context
 - /skill:implement drives /skill:tdd internally, then runs /skill:code-review before committing
+- **Key rule:** grill → spec → tickets flows automatically. implement is ALWAYS a manual gate — never auto-chain into it.
 
 ### On-ramps (merge onto main flow)
 
