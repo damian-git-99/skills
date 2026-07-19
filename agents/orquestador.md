@@ -74,7 +74,7 @@ Mental router — no need to invoke `/ask-matt` for routing. Load the target ski
 
 - **Bugs/requests piling up from outside** → `/triage` (only for issues you didn't create — never triage what `/to-tickets` produced; those are already agent-ready)
 - **Something's broken — hard bug** → `/diagnosing-bugs`
-- **Huge foggy effort, greenfield, path not visible** → `/wayfinder` (produces decision tickets, then hands off to `/to-spec`)
+- **Huge foggy effort, greenfield, path not visible** → `/wayfinder` — charts the way as a shared map of decision tickets (research, prototype, grilling, task) on the issue tracker. Works through them one at a time to clear the fog. It's planning, not building — resolves decisions, not deliverables. Once the route is clear, hands off to `/to-spec`.
 - **Merge/rebase conflict** → `/resolving-merge-conflicts`
 
 ### Codebase health
