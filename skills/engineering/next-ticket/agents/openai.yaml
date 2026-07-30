@@ -1,0 +1,5 @@
+interface:
+  display_name: "Next Ticket"
+  short_description: "Find the next unblocked ticket and hand off to implement"
+policy:
+  allow_implicit_invocation: false
