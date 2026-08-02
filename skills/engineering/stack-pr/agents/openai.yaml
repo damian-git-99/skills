@@ -1,0 +1,5 @@
+interface:
+  display_name: "Stack PR"
+  short_description: "Create and manage stacked PRs for ticket batches"
+policy:
+  allow_implicit_invocation: false

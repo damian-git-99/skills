@@ -25,6 +25,8 @@ The route most work travels. You have an idea and want it built.
 
    Either way, **`/implement`** builds each issue by driving **`/tdd`** internally — one red-green slice at a time — then closes out by running **`/code-review`**, a two-axis review (Standards + Spec) of the diff, before committing. Reach for **`/tdd`** on its own when you just want to build a concrete behaviour test-first without a full spec, and **`/code-review`** on its own whenever you want to review a branch or PR against a fixed point.
 
+   On a local tracker, **`/next-ticket`** finds the next unblocked ticket for a feature and hands it to `/implement` — the assembly line for working through a PRD ticket by ticket. When the review load of one giant PR is the problem, **`/stack-pr`** turns ticket batches into **stacked PRs** via the `gh-stack` extension: one small PR per batch, chained on top of a feature branch (`feat/<slug>/batch-N`), all merged into `feat/<slug>` first — a safe zone for QA — before a single final PR to `main`. `/implement` loads `/stack-pr` automatically when a ticket carries `**Feature:**` metadata.
+
 ### Context hygiene
 
 Keep steps 1–3 in **one unbroken context window** — don't compact or clear until after `/to-tickets` — so the grilling, spec, and tickets all build on the same thinking. Each `/implement` then starts fresh, working from the ticket.
