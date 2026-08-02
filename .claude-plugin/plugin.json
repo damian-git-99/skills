@@ -28,6 +28,7 @@
     "./skills/engineering/tdd",
     "./skills/engineering/to-spec",
     "./skills/engineering/to-tickets",
+    "./skills/engineering/setup-stack",
     "./skills/engineering/next-ticket",
     "./skills/engineering/stack-pr",
     "./skills/engineering/wayfinder",

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Stack"
+  short_description: "Decide stacked PRs for a feature and annotate tickets into batches"
+policy:
+  allow_implicit_invocation: false

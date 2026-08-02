@@ -13,6 +13,7 @@ Reachable only when you type them (Claude Code: `disable-model-invocation: true`
 - **[setup-matt-pocock-skills](./setup-matt-pocock-skills/SKILL.md)** — Configure this repo for the engineering skills (issue tracker, triage labels, domain doc layout). Run once per repo.
 - **[to-spec](./to-spec/SKILL.md)** — Turn the current conversation into a spec and publish it to the issue tracker.
 - **[to-tickets](./to-tickets/SKILL.md)** — Break any plan, spec, or conversation into a set of tracer-bullet tickets, each declaring its blocking edges — text in a local file, or native blocking links on a real tracker.
+- **[setup-stack](./setup-stack/SKILL.md)** — Decide whether a feature's tickets ship as stacked PRs, group them into batches by estimated size, and annotate them with the metadata `/stack-pr` needs.
 - **[next-ticket](./next-ticket/SKILL.md)** — Find the next unblocked ticket for a feature and hand it off to `/implement`.
 - **[stack-pr](./stack-pr/SKILL.md)** — Create and manage stacked PRs — one small PR per batch of tickets — via the `gh-stack` extension, with a feature branch as a safe zone for QA before the final PR to main.
 - **[implement](./implement/SKILL.md)** — Build the work described by a spec or set of tickets, driving `/tdd` at pre-agreed seams and closing out with `/code-review` before committing.
