@@ -16,15 +16,20 @@ and stacked PRs enabled on the repository (otherwise `gh stack submit` exits wit
 ## Branch model
 
 ```
-main ← feat/<slug> ← feat/<slug>/batch-1 ← feat/<slug>/batch-2 ← ...
+main ← feat/<slug> ← feat/<slug>-batch-1 ← feat/<slug>-batch-2 ← ...
 ```
 
 - `feat/<slug>` is the **feature branch** — the safe zone that accumulates merged batches.
   Nothing touches `main` until the very end.
-- Each `feat/<slug>/batch-N` holds one batch of tickets; its PR targets `feat/<slug>` and its
+- Each `feat/<slug>-batch-N` holds one batch of tickets; its PR targets `feat/<slug>` and its
   diff shows only that batch (its base is the previous branch).
 - Merge method: **squash** — one commit per batch on `feat/<slug>`, one commit per feature on
   `main`.
+
+> **Naming rule — hyphen, never slash:** git's `check-ref-format` forbids one ref being a
+> prefix of another, so `feat/<slug>` and `feat/<slug>/batch-N` can never coexist. The batch
+> branches must be `feat/<slug>-batch-N` (hyphen). Do not "fix" this back to a slash — it
+> fails at `git checkout` time, not at push time.
 
 ## Ticket metadata
 
@@ -53,15 +58,15 @@ If either fails, stop and report. Do not touch anything.
 
 ```bash
 git checkout -b feat/<slug> main
-gh stack init --base feat/<slug> feat/<slug>/batch-1
+gh stack init --base feat/<slug> feat/<slug>-batch-1
 ```
 
 ### 3. Branch setup — start of every ticket
 
 Called by `/implement` before it codes a ticket with `**Feature:**`:
 
-- Already on the ticket's `feat/<slug>/batch-N` → nothing to do.
-- New batch → `gh stack add feat/<slug>/batch-N` (creates it on top of the current branch).
+- Already on the ticket's `feat/<slug>-batch-N` → nothing to do.
+- New batch → `gh stack add feat/<slug>-batch-N` (creates it on top of the current branch).
 - Unsure where you are → `gh stack view --json` and inspect `currentBranch` and `branches`.
 
 ### 4. Submit — last ticket of a batch (`**Open PR:** true`)

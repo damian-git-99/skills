@@ -12,7 +12,7 @@ npx skills update stack-pr
 
 ## What it does
 
-`stack-pr` turns a feature's ticket batches into **stacked PRs** — one small PR per batch instead of one unreadable 5000-line PR at the end. Each batch lives on its own branch (`feat/<slug>/batch-N`) chained on top of the previous one, so every PR's diff shows only that batch's changes. The chain roots on a feature branch (`feat/<slug>`) that accumulates merged batches as a safe zone for QA — `main` is not touched until a single final PR at the end.
+`stack-pr` turns a feature's ticket batches into **stacked PRs** — one small PR per batch instead of one unreadable 5000-line PR at the end. Each batch lives on its own branch (`feat/<slug>-batch-N`, hyphen — git forbids `feat/<slug>/batch-N` because a ref can't be a prefix of another ref) chained on top of the previous one, so every PR's diff shows only that batch's changes. The chain roots on a feature branch (`feat/<slug>`) that accumulates merged batches as a safe zone for QA — `main` is not touched until a single final PR at the end.
 
 Its defining constraint: **the diff of each PR is only its own batch, because each branch is based on the previous one** — reviewers see small, reviewable deltas while the code accumulates upward.
 

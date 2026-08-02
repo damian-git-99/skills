@@ -30,7 +30,7 @@ If the ticket carries `**Feature:**` metadata, the work participates in a stacke
 (one small PR per batch of tickets, managed via the `gh-stack` extension):
 
 1. **Before starting** (alongside the status change): load `/stack-pr` and run its **branch
-   setup** — it ensures the correct `feat/<slug>/batch-N` branch exists and is checked out,
+   setup** — it ensures the correct `feat/<slug>-batch-N` branch exists and is checked out,
    creating the feature branch and initializing the stack on the first ticket of a feature.
 2. **After a successful commit**: if the ticket has `**Open PR:** true`, load `/stack-pr` and
    run its **submit** — push the branch, create the batch PR, and give it a real title.
