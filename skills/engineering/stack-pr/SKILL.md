@@ -48,11 +48,18 @@ A ticket opts into the stacked flow via three fields:
 Verify the starting point before creating anything:
 
 ```bash
-git branch --show-current    # must be main
-git status --porcelain       # must be empty
+git branch --show-current                     # must be main
+git status --porcelain                        # must be empty, except .scratch/ edits
 ```
 
-If either fails, stop and report. Do not touch anything.
+Ticket status edits under `.scratch/` are part of the pipeline, not dirt — a tree whose only
+changes are there passes the guard:
+
+```bash
+git status --porcelain | grep -v "^ M .scratch/"   # must be empty
+```
+
+If either check fails, stop and report. Do not touch anything.
 
 ### 2. Init — first ticket of batch 1
 

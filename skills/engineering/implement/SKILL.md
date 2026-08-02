@@ -29,10 +29,10 @@ Do not modify the parent spec or PRD issue — only the ticket file itself.
 If the ticket carries `**Feature:**` metadata, the work participates in a stacked-PR pipeline
 (one small PR per batch of tickets, managed via the `gh-stack` extension):
 
-1. **Before starting** (alongside the status change): **delegate the branch setup to a
-   sub-agent** — do not load `/stack-pr` into your own context and do not run any stack
-   commands yourself. Launch a read-only-fast sub-agent (the platform equivalent of OpenCode's
-   `explore` / Pi's `scout`) with this task:
+1. **Before the status change**: **delegate the branch setup to a sub-agent** — do not load
+   `/stack-pr` into your own context and do not run any stack commands yourself. Launch a
+   read-only-fast sub-agent (the platform equivalent of OpenCode's `explore` / Pi's `scout`)
+   with this task:
 
    > Read the skill at `skills/engineering/stack-pr/SKILL.md` and the ticket file `<ticket
    > path>`. Run the **branch setup** operation (guard, init on the first ticket of a feature,
@@ -44,6 +44,10 @@ If the ticket carries `**Feature:**` metadata, the work participates in a stacke
    The sub-agent leaves the branch ready for coding; it must not write code. Its returned
    branch is authoritative — if it reports an error or an unexpected branch, stop and surface
    it to the user instead of starting to code.
+
+   Only after the sub-agent confirms the branch is ready do you change the ticket status to
+   `in-progress` (see Ticket lifecycle) and start coding — never before, or the dirty tree
+   trips the guard.
 
 2. **After a successful commit**: if the ticket has `**Open PR:** true`, load `/stack-pr` and
    run its **submit** — push the branch, create the batch PR, and give it a real title.
