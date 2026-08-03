@@ -34,7 +34,7 @@ grouping, not bill hours:
 
 | Signal in the ticket | Lines |
 |----------------------|-------|
-| "crear" + nuevo archivo / componente / servicio / módulo / ruta | +150 |
+| "create" + new file / component / service / module / route | +150 |
 | "modificar" / "refactorizar" / "ajustar" algo existente | +75 |
 | Each file path mentioned (`src/...`, `app/...`, `.tsx`, `.go`, etc.) | +50 |
 | Each test mentioned ("test", "spec", "prueba", "coverage") | +40 |
@@ -51,9 +51,9 @@ next ticket would exceed the threshold — a single oversized ticket becomes its
 Present the result:
 
 ```
-batch-1: tickets 001-003  (~750 líneas)
-batch-2: tickets 004-006  (~820 líneas)
-batch-3: tickets 007-008  (~600 líneas)
+batch-1: tickets 001-003  (~750 lines)
+batch-2: tickets 004-006  (~820 lines)
+batch-3: tickets 007-008  (~600 lines)
 ```
 
 Ask: **OK with these batches?**

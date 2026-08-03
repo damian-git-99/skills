@@ -66,11 +66,21 @@ If either check fails, stop and report. Do not touch anything.
 ```bash
 git checkout -b feat/<slug> main        # only if feat/<slug> doesn't exist yet
 gh stack init --base feat/<slug> feat/<slug>-batch-1
+git push -u origin feat/<slug>
 ```
 
-Init is also how you start a **new stack generation**. A stack is consumed once every branch
-in it is merged — `add` then refuses to hang anything off it ("All branches in this stack
-have been merged"). Start a fresh stack on the same feature branch (see Operation 3).
+On the very first generation, also create the **final PR** — the feature's progress tracker,
+born as a draft with an empty diff so reviewers are never notified:
+
+```bash
+gh pr create --base main --head feat/<slug> --draft \
+  --title "feat(<slug>): <summary>" --body "<batch checklist — nothing checked>"
+```
+
+Skip this on later generations — the final PR already exists. Init is also how you start a
+**new stack generation**. A stack is consumed once every branch in it is merged — `add` then
+refuses to hang anything off it ("All branches in this stack have been merged"). Start a
+fresh stack on the same feature branch (see Operation 3).
 
 ### 3. Branch setup — start of every ticket
 
@@ -108,7 +118,7 @@ Find `<number>` from `gh stack view --json` — the OPEN PR whose branch was jus
 
 Annotate the ticket file with the PR URL (`**PR:** <url>`), then report:
 
-> PR #N creada: <url> — revisar y mergear cuando quieras.
+> PR #N created: <url> — review and merge whenever you're ready.
 
 ### 5. Sync — after a batch PR is merged
 
@@ -117,6 +127,33 @@ gh stack sync --prune
 ```
 
 Fast-forwards `feat/<slug>` with the merged batch and rebases the remaining branches onto it.
+
+Then update the final PR's progress checklist (the tracker created in Operation 2).
+Regenerate the whole body from this template — never hand-edit it:
+
+```markdown
+## Summary
+
+<feature summary>
+
+## Batches
+
+- [x] Batch 1 (tickets 001-003) — #12
+- [ ] Batch 2 (tickets 004-006)
+
+<add "All batches merged — ready for QA." once everything is checked>
+```
+
+For each batch branch `feat/<slug>-batch-N`, look up its PR state
+(`gh pr list --head feat/<slug>-batch-N --json number,state`) — merged/closed means checked,
+no PR yet means unchecked, and the PR number goes on the line. Then:
+
+```bash
+FINAL_PR=$(gh pr list --base main --head feat/<slug> --state open --json number -q '.[0].number')
+gh pr edit "$FINAL_PR" --body "$BODY"
+```
+
+If no final PR exists (the feature started before this change), skip the update.
 
 ### 6. Merge a batch — when the user approves
 
@@ -128,13 +165,16 @@ Merges everything up to and including PR `<pr-number>` (bottom to top), all-or-n
 
 ### 7. Final PR — feature complete, QA passed
 
-```bash
-git checkout feat/<slug>
-git pull origin feat/<slug>
-gh pr create --base main --head feat/<slug> \
-  --title "feat(<slug>): <summary>" \
-  --body "Batches 1..N mergeados en feat/<slug>. QA OK."
-```
+The final PR already exists (created in Operation 2); nothing is created here. Close out:
+
+1. Verify every batch is checked in the final PR's checklist — nothing still open.
+2. Mark it ready for review:
+
+   ```bash
+   gh pr ready "$FINAL_PR"
+   ```
+
+3. On approval, merge with squash: `gh pr merge "$FINAL_PR" --squash`.
 
 ## Edge cases
 

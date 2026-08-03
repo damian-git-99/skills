@@ -27,7 +27,7 @@ This returns only directories whose tickets aren't all `done`. Then:
 
 - **One active feature**: use it automatically.
 - **Multiple active features**: list them and ask which one to work on.
-- **None**: stop. Say "No hay features con tickets pendientes."
+- **None**: stop. Say "No features with pending tickets."
 
 ### 2. Find the next ticket (sub-agent)
 
@@ -59,7 +59,7 @@ The sub-agent returns one of:
 Then load `/implement` and pass it the ticket file path. `/implement` will mark it `in-progress`
 before starting.
 
-**All tickets done**: say "Este PRD está completo. Todos los tickets tienen Status: done."
+**All tickets done**: say "This PRD is complete. All tickets have Status: done."
 
 **All remaining tickets blocked**: present the list the sub-agent returned — which tickets are
 blocked and what each is waiting for.
