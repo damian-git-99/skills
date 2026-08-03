@@ -61,19 +61,33 @@ git status --porcelain | grep -v "^ M .scratch/"   # must be empty
 
 If either check fails, stop and report. Do not touch anything.
 
-### 2. Init — first ticket of batch 1
+### 2. Init — first ticket of batch 1, or a fresh stack generation
 
 ```bash
-git checkout -b feat/<slug> main
+git checkout -b feat/<slug> main        # only if feat/<slug> doesn't exist yet
 gh stack init --base feat/<slug> feat/<slug>-batch-1
 ```
+
+Init is also how you start a **new stack generation**. A stack is consumed once every branch
+in it is merged — `add` then refuses to hang anything off it ("All branches in this stack
+have been merged"). Start a fresh stack on the same feature branch (see Operation 3).
 
 ### 3. Branch setup — start of every ticket
 
 Called by `/implement` before it codes a ticket with `**Feature:**`:
 
 - Already on the ticket's `feat/<slug>-batch-N` → nothing to do.
-- New batch → `gh stack add feat/<slug>-batch-N` (creates it on top of the current branch).
+- New batch → first check whether the current stack is still alive:
+
+  ```bash
+  gh stack view --json
+  ```
+
+  - **Any branch with `isMerged: false`** (or `pr.state == "OPEN"`) → the stack is alive:
+    `gh stack add feat/<slug>-batch-N` (hangs off the current branch).
+  - **Every branch `isMerged: true`**, or the command reports "not in a stack" → the stack is
+    consumed: `gh stack init --base feat/<slug> feat/<slug>-batch-N` (fresh stack rooted on
+    the feature branch).
 - Unsure where you are → `gh stack view --json` and inspect `currentBranch` and `branches`.
 
 ### 4. Submit — last ticket of a batch (`**Open PR:** true`)
@@ -125,6 +139,8 @@ gh pr create --base main --head feat/<slug> \
 ## Edge cases
 
 - **Exit code 9** on submit → stacked PRs not enabled on the repo. Tell the user to enable them.
+- **"All branches in this stack have been merged"** from `add` → the stack is consumed.
+  Regenerate: `gh stack init --base feat/<slug> feat/<slug>-batch-N` — never retry `add`.
 - **User starts the next batch before merging the current PR**: fine — the stack continues on
   top regardless (branch N+1 already contains batch N's code). Only sync/cleanup waits on the
   merge.
