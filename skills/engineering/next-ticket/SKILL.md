@@ -23,7 +23,10 @@ features without reading any files:
 rg "^\*\*Status:\*\* (ready-for-agent|in-progress)" .scratch/*/issues/ --files-with-matches
 ```
 
-This returns only directories whose tickets aren't all `done`. Then:
+This returns only directories whose tickets aren't all finished. Only tickets carrying
+`**Status:**` (the `/to-tickets` format, bold) count as active. `/wayfinder` decision tickets
+use a bare `Status: resolved|closed` (no bold) and never match — they are decisions, not
+deliverables, so a feature holding only them is not active. Then:
 
 - **One active feature**: use it automatically.
 - **Multiple active features**: list them and ask which one to work on.
@@ -36,18 +39,25 @@ equivalent) to scan the tickets without polluting the parent's context. Give it 
 
 > Scan `.scratch/<slug>/issues/` and find the first unblocked `ready-for-agent` ticket.
 >
-> 1. Run `rg "^\*\*Status:\*\*|^\*\*Blocked by:\*\*" .scratch/<slug>/issues/` to extract status
->    and blocker lines from all tickets in one call.
-> 2. Parse each ticket's Status (`ready-for-agent`, `in-progress`, or `done`) and Blocked by
->    (`"None — can start immediately"` or a list like `#01, #02`).
-> 3. Walk the files in numeric order (by `NN` prefix). For each `ready-for-agent` ticket:
->    check that every referenced blocker has `Status: done`. The first one where all blockers
->    are done is the winner.
+> 1. Run `rg "^\*\*Status:\*\*|^Status:|^\*\*Blocked by:\*\*" .scratch/<slug>/issues/` to
+>    extract status and blocker lines from all files in one call. Note the two formats:
+>    `/to-tickets` writes `**Status:**` (bold); `/wayfinder` decision tickets write a bare
+>    `Status:` (no bold).
+> 2. Classify each file's status:
+>    - `**Status:** ready-for-agent` → implementable candidate.
+>    - `**Status:** in-progress` → being worked on elsewhere; skip.
+>    - `**Status:** done` → finished; skip.
+>    - `Status: resolved` or `Status: closed` (wayfinder, no bold) → decision settled or
+>      closed; skip — not implementable work.
+>    - No status line at all → wayfinder decision ticket; skip.
+> 3. Walk the candidates in numeric order (by `NN` prefix). For each `ready-for-agent` ticket:
+>    check that every referenced blocker is finished (`done`, `resolved`, or `closed`). The
+>    first one where all blockers are finished is the winner.
 > 4. Read the winning ticket file fully.
 > 5. Return: the ticket file path, ticket number, title, and a one-line summary of what to build.
 >
-> If no ticket is found, return why: all done, all blocked (list what each is waiting for),
-> or directory empty.
+> If no candidate is found, return why: all finished (done/resolved/closed), all blocked (list
+> what each is waiting for), all in-progress, or directory empty.
 
 The sub-agent's result is all you need — do not re-read or re-scan ticket files yourself.
 
@@ -59,7 +69,7 @@ The sub-agent returns one of:
 Then load `/implement` and pass it the ticket file path. `/implement` will mark it `in-progress`
 before starting.
 
-**All tickets done**: say "This PRD is complete. All tickets have Status: done."
+**All tickets done**: say "This PRD is complete. All tickets are finished (done, resolved, or closed)."
 
 **All remaining tickets blocked**: present the list the sub-agent returned — which tickets are
 blocked and what each is waiting for.
@@ -71,8 +81,10 @@ wrong with `/to-tickets`.
 
 - **An `in-progress` ticket exists**: the sub-agent skips it — assume another session is
   working on it. If the sub-agent reports all remaining tickets are `in-progress`, warn the user.
-- **Corrupt or unparseable ticket**: the sub-agent skips it and reports which file couldn't
-  be read. Warn the user and continue.
+- **Corrupt or unparseable ticket**: a file that looks like a `/to-tickets` ticket (has
+  `**Status:**` or `**Blocked by:**`) but can't be parsed — the sub-agent skips it and reports
+  which file. Warn the user and continue. Wayfinder decision tickets (no bold fields) are not
+  corrupt — they're just not implementable; skip silently.
 
 ### 5. What this skill does NOT do
 
