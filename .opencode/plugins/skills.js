@@ -79,6 +79,7 @@ export const SkillsPlugin = async ({ client, directory }) => {
   const skillsEngDir = resolveRootPath('skills/engineering');
   const skillsProductivityDir = resolveRootPath('skills/productivity');
   const agentsDir = resolveRootPath('agents');
+  const commandsDir = resolveRootPath('command');
 
   return {
     config: async (config) => {
@@ -129,6 +130,36 @@ export const SkillsPlugin = async ({ client, directory }) => {
         }
       } catch (e) {
         console.error('[mattpocock-skills] Failed to register agents:', e.message);
+      }
+
+      // Register commands from command/*.md so they autocomplete as /commands
+      config.command = config.command || {};
+
+      try {
+        const files = fs.readdirSync(commandsDir);
+        for (const file of files) {
+          if (!file.endsWith('.md')) continue;
+
+          const commandName = file.replace(/\.md$/, '');
+          const fullPath = path.join(commandsDir, file);
+          const content = fs.readFileSync(fullPath, 'utf8');
+          const { frontmatter, body } = extractFrontmatter(content);
+
+          const existing = config.command[commandName] || {};
+
+          config.command[commandName] = {
+            ...(existing.model !== undefined
+              ? { model: existing.model }
+              : frontmatter.model !== undefined && { model: frontmatter.model }),
+            ...(existing.agent !== undefined
+              ? { agent: existing.agent }
+              : frontmatter.agent !== undefined && { agent: frontmatter.agent }),
+            description: existing.description || frontmatter.description || '',
+            template: existing.template || body,
+          };
+        }
+      } catch (e) {
+        console.error('[mattpocock-skills] Failed to register commands:', e.message);
       }
     },
   };
