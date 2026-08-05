@@ -52,81 +52,41 @@ Before acting on ANY user request, classify it as **complex** or **not**.
 **If complex**, do NOT ask. Activate immediately:
 1. Announce: "This looks like a complex feature. Activating Matt workflow: /skill:grill-with-docs → /skill:to-spec → /skill:to-tickets → /skill:implement. Starting with grill-with-docs."
 2. Load /skill:grill-with-docs and start grilling.
-3. If the user interrupts ("stop", "skip", "implement directly", "wayfinder") at any step, respect the interruption.
+3. After EACH phase, STOP and ask whether to proceed: "Grilling done. Sigo con /skill:to-spec?" → "Spec lista. Sigo con /skill:to-tickets?" → "Tickets ready. Arranco /skill:implement con el primer ticket?"
+4. If the user says "automatic", "seguí sin preguntar", or "keep going" → chain the remaining phases without asking.
+5. /skill:to-tickets → /skill:implement is an especially important gate: each ticket deserves a fresh session. Never skip it unless the user explicitly overrides.
+6. If the user interrupts ("stop", "skip", "implement directly", "wayfinder") at any step, respect the interruption.
 
 **Exception — foggy greenfield / huge effort**: if the idea is so large or undefined that the way forward isn't visible at all (greenfield project, massive feature with unknown scope), announce and route to /skill:wayfinder instead. Say: "This is too foggy for the main flow — the path isn't visible yet. Activating /skill:wayfinder to chart decision tickets first, then /skill:to-spec once the map is clear."
 
 **If NOT complex** (targeted fix, scoped refactor, question, bug, maintenance, small change):
-- Route directly to the appropriate skill from the map below. No announcement.
+- Read \`skills/engineering/ask-matt/SKILL.md\` and route per its map. No announcement.
 
 **Explicit exception:** if the user says "implement directly", "no grill", "skip to implement", respect it and jump to /skill:implement. Briefly acknowledge: "OK, skipping grill. If you want to reorient later, the workflow is still available."
-
-**Pipeline phases — ask at every gate by default:**
-- After EACH phase completes, STOP and ask whether to proceed to the next. Default behavior:
-  - /skill:grill-with-docs done → "Grilling done. ¿Sigo con /skill:to-spec?"
-  - /skill:to-spec done → "Spec lista. ¿Sigo con /skill:to-tickets?"
-  - /skill:to-tickets done → "Tickets ready. Each one should be implemented in a fresh session. ¿Arranco /skill:implement con el primer ticket?"
-- If the user says "automatic", "seguí sin preguntar", or "keep going" → chain the remaining phases without asking.
-- /skill:to-tickets → /skill:implement is an especially important gate: each ticket deserves a clean context window. Never skip this gate unless the user explicitly overrides.
 
 Use judgment, not just keywords. "Add a button to this page" is not complex. "Add a complete admin dashboard" is.
 
 ---
 
-## Router
+## Map — source of truth
 
-Mental router — no need to invoke /skill:ask-matt for routing. Load the target skill via the \`skill\` tool (read its SKILL.md).
+The full map of skills and flows lives in \`skills/engineering/ask-matt/SKILL.md\` (the phase-boundary decision tree is \`PHASE-BOUNDARIES.md\` beside it). Whenever you need to route, read that file and follow its map. Never restate its routes here — ask-matt is the single source of truth; this file only holds the gates and guards.
 
-### Main flow: idea → ship
+The one flow this orchestrator activates itself, without consulting the map:
+- Complex feature → /skill:grill-with-docs → /skill:to-spec → /skill:to-tickets → /skill:implement (each ticket in a fresh session)
+- Foggy greenfield → /skill:wayfinder, then merge onto the main flow at /skill:to-spec once the map is clear
 
-- New idea WITH a codebase → /skill:grill-with-docs
-- New idea WITHOUT a codebase → /skill:grill-me (use the productivity grill-me skill)
-- After grilling, branch: **multi-session build?**
-  - **Yes** → /skill:to-spec → /skill:to-tickets → /skill:implement (per ticket, fresh context each). **Each phase asks before proceeding** unless the user says "automatic".
-  - **No** → /skill:implement directly in this context
-- /skill:implement drives /skill:tdd internally, then runs /skill:code-review before committing
-- **Key rule:** every phase gate asks by default. grill → spec → tickets → implement all require confirmation. Only skip gates if the user explicitly says "automatic" or "keep going".
-
-### On-ramps (merge onto main flow)
-
-- **Bugs/requests piling up from outside** → /skill:triage (only for issues you didn't create — never triage what /skill:to-tickets produced; those are already agent-ready)
-- **Something's broken — hard bug** → /skill:diagnosing-bugs
-- **Huge foggy effort, greenfield, path not visible** → /skill:wayfinder — charts the way as a shared map of decision tickets (research, prototype, grilling, task) on the issue tracker. Works through them one at a time to clear the fog. It's planning, not building — resolves decisions, not deliverables. Once the route is clear, hands off to /skill:to-spec.
-- **Merge/rebase conflict** → /skill:resolving-merge-conflicts
-
-### Codebase health
-
-- **Architecture friction / codebase upkeep** → /skill:improve-codebase-architecture (generates an idea; take that into /skill:grill-with-docs to build it)
-
-### Standalone
-
-- **Design question needs runnable answer** → /skill:prototype (throwaway code, keep the answer)
-- **Research / reading legwork** → /skill:research (background agent, leaves a cited markdown file)
-- **TDD standalone** → /skill:tdd
-- **Code review standalone** → /skill:code-review
-- **Learn a concept over sessions** → /skill:teach
-- **Write/edit skills** → /skill:writing-great-skills
-
-### Vocabulary underneath (pull in as needed, not standalone routing targets)
-
-- **Domain language is fuzzy** → /skill:domain-modeling (runs beneath other skills to keep CONTEXT.md clean)
-- **Module shape / deep-module design** → /skill:codebase-design (runs beneath /skill:tdd and /skill:improve-codebase-architecture)
-
-### Fallback
-
-If this map doesn't cover the situation, load /skill:ask-matt for the full router.
-
----
+**Key rule:** every phase gate asks by default. grill → spec → tickets → implement all require confirmation. Only skip gates if the user explicitly says "automatic" or "keep going".
 
 ## Context hygiene
 
-- Keep steps 1–3 (grill → spec → tickets) in **one unbroken context window** — don't compact or clear until after /skill:to-tickets. Each /skill:implement then starts fresh, working from one ticket.
-- The limit is the **smart zone** (~120k tokens on state-of-the-art models). If a session approaches it before /skill:to-tickets, use /handoff to fork to a fresh session — don't push on degraded context.
-- /handoff = fork into a new session (preserves the old one). /compact (built-in) = continue in the same session (summarizes earlier turns). Use /handoff at intentional breaks between phases; use /compact at phase boundaries when you don't mind losing verbatim history. **Never compact mid-phase.**
+- Keep grill → spec → tickets in **one unbroken context window** — don't compact or clear until after /skill:to-tickets. Each /skill:implement then starts fresh, working from one ticket.
+- The limit is the **smart zone** (~150k tokens on state-of-the-art models). If a session approaches it before /skill:to-tickets, don't push on degraded context.
+- At phase boundaries the default is /compact. Use /handoff only when something must travel (a new harness, a new directory, a colleague, or a side task forked mid-phase). **Never compact mid-phase** — the decision happens at the boundary.
 
 ## Smart zone alert
 
-If you estimate the context is approaching the smart zone (~120k tokens), notify me with a text message. Do not take automatic action.
+If you estimate the context is approaching the smart zone (~150k tokens), notify me with a text message. Do not take automatic action.
 `;
 
 export default function mattWorkflow(pi: ExtensionAPI) {
