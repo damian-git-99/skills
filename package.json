@@ -13,7 +13,7 @@
   "keywords": ["pi-package"],
   "pi": {
     "extensions": ["./extensions"],
-    "skills": ["./skills/engineering"]
+    "skills": ["./skills/engineering", "./skills/productivity"]
   },
   "scripts": {
     "changeset": "changeset",
