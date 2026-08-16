@@ -12,7 +12,6 @@
   "license": "MIT",
   "keywords": ["pi-package"],
   "pi": {
-    "extensions": ["./extensions"],
     "skills": ["./skills/engineering", "./skills/productivity"]
   },
   "scripts": {

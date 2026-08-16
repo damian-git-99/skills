@@ -1,4 +1,4 @@
 ---
 description: Use when you need to resolve an in-progress git merge/rebase conflict.
 ---
-Load and follow the `resolving-merge-conflicts` skill for this task — read its SKILL.md and apply its workflow to the current situation.
+Load the `resolving-merge-conflicts` skill with the skill tool, then apply its workflow to the current situation. Do not look for it inside this repo — it is an installed skill, independent of the project.

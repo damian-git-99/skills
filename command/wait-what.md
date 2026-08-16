@@ -1,4 +1,4 @@
 ---
 description: Stop. That last message did not land — re-pitch it.
 ---
-Load and follow the `wait-what` skill for this task — read its SKILL.md and apply its workflow to the current situation.
+Load the `wait-what` skill with the skill tool, then apply its workflow to the current situation. Do not look for it inside this repo — it is an installed skill, independent of the project.

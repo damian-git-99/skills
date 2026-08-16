@@ -57,7 +57,7 @@ Each smell reads *what it is* → *how to fix*; match it against the diff:
 
 ### 4. Spawn both sub-agents in parallel
 
-Send a single message with two subagent calls in parallel — one for each dedicated subagent:
+Send a single message with two subagent calls in parallel — one for each dedicated subagent (`code-reviewer-standards` / `code-reviewer-spec`; under Pi, the builtin `reviewer` for both axes — fresh context and read-only, since Pi's `reviewer` can edit files by default and this review only reports):
 
 **Standards — `code-reviewer-standards` subagent.** Include:
 
