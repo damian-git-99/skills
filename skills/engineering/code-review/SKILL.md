@@ -10,7 +10,7 @@ Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
 
 Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings.
 
-The issue tracker should have been provided to you — run `/setup-matt-pocock-skills` if `docs/agents/issue-tracker.md` is missing.
+The issue tracker should have been provided to you. If `docs/agents/issue-tracker.md` is missing, tell the user to run `/setup-matt-pocock-skills`.
 
 ## Process
 
@@ -57,9 +57,9 @@ Each smell reads *what it is* → *how to fix*; match it against the diff:
 
 ### 4. Spawn both sub-agents in parallel
 
-Send a single message with two subagent calls in parallel — one for each dedicated subagent (`code-reviewer-standards` / `code-reviewer-spec`; under Pi, the builtin `reviewer` for both axes — fresh context and read-only, since Pi's `reviewer` can edit files by default and this review only reports):
+**Standards sub-agent prompt** — include:
 
-**Standards — `code-reviewer-standards` subagent.** Include:
+Send a single message with two subagent calls in parallel — one for each dedicated subagent (`code-reviewer-standards` / `code-reviewer-spec`; under Pi, the builtin `reviewer` for both axes — fresh context and read-only, since Pi's `reviewer` can edit files by default and this review only reports):
 
 - The full diff command and commit list.
 - The list of standards-source files you found in step 3, **plus the smell baseline from step 3** pasted in full.
