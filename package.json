@@ -4,7 +4,7 @@
   "private": true,
   "description": "Matt Pocock's agent skills for real engineering",
   "type": "module",
-  "main": ".opencode/plugins/skills.js",
+  "main": "opencode-plugin.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/damian-git-99/skills"
@@ -18,6 +18,9 @@
     "changeset": "changeset",
     "version": "changeset version && node scripts/sync-plugin-version.mjs",
     "check-plugin-version": "node scripts/sync-plugin-version.mjs --check"
+  },
+  "dependencies": {
+    "@opencode/plugin": "2.0.16"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",

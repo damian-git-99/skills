@@ -1,6 +1,6 @@
 # Plugin Installation
 
-Notes on installing this repo as a plugin in **opencode** and **Pi**, kept separate from the `README.md` — this repo is a fork and we want to avoid merge conflicts with upstream.
+Notes on installing this repo as a plugin in **OpenCode V2** and **Pi**. This file stays separate from the `README.md` to avoid merge conflicts with upstream.
 
 Every example uses `~/skills` as the placeholder for where the repo is cloned locally, and `git:github.com/damian-git-99/skills` for the remote (this fork). Replace them with your actual paths / repo.
 
@@ -8,12 +8,12 @@ Every example uses `~/skills` as the placeholder for where the repo is cloned lo
 
 ### From a local clone
 
-In the opencode config (`~/.config/opencode/opencode.json` or your project's `opencode.json`), add a plugin entry pointing at the cloned repo:
+In the OpenCode config (`~/.config/opencode/opencode.json` or your project's `opencode.json`), add a plugin entry pointing at the cloned repo:
 
 ```json
 {
-  "plugin": [
-    "matt-skills@file:///home/user/skills"
+  "plugins": [
+    "file:///home/user/skills"
   ]
 }
 ```
@@ -22,17 +22,17 @@ Point the `file://` URL to wherever you cloned the repo.
 
 ### Directly from git (no clone needed)
 
-OpenCode resolves `@git+<url>` specs and clones the repo automatically. Use the `git` protocol form:
+OpenCode resolves npm-compatible Git package specifications and clones the repo automatically. Use a GitHub shortcut or Git URL:
 
 ```json
 {
-  "plugin": [
-    "matt-skills@git+https://github.com/damian-git-99/skills.git"
+  "plugins": [
+    "github:damian-git-99/skills"
   ]
 }
 ```
 
-The `matt-skills` part is just the package name OpenCode uses to reference the plugin; it matches the `name` in the repo's `package.json` (`mattpocock-skills` is the upstream one — use yours if different). The plugin (`.opencode/plugins/skills.js`) automatically registers the skills from `skills/engineering` and `skills/productivity`, the agents from `agents/*.md`, and the commands from `command/*.md`.
+The plugin entrypoint (`opencode-plugin.js`) registers the promoted skills from `skills/engineering` and `skills/productivity`, plus commands from `command/*.md`. It lives outside `.opencode/plugins/` so it is not auto-loaded a second time when the package is configured as a plugin. Agents live in `.opencode/agents/` and are discovered by OpenCode V2 as native agent files. When using this repo as a plugin from another project, copy or symlink those agent files into that project's `.opencode/agents/`; the V2 plugin API cannot add new agents.
 
 ## Pi
 
