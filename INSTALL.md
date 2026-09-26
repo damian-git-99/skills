@@ -32,7 +32,7 @@ OpenCode resolves npm-compatible Git package specifications and clones the repo 
 }
 ```
 
-The plugin entrypoint (`opencode-plugin.js`) registers the promoted skills from `skills/engineering` and `skills/productivity`, plus commands from `command/*.md`. It lives outside `.opencode/plugins/` so it is not auto-loaded a second time when the package is configured as a plugin. Agents live in `.opencode/agents/` and are discovered by OpenCode V2 as native agent files. When using this repo as a plugin from another project, copy or symlink those agent files into that project's `.opencode/agents/`; the V2 plugin API cannot add new agents.
+The plugin entrypoint (`opencode-plugin.js`) registers the promoted skills from `skills/engineering` and `skills/productivity`. Invoke them directly as skills, without separate command wrappers. The entrypoint lives outside `.opencode/plugins/` so it is not auto-loaded a second time when the package is configured as a plugin. Agents live in `.opencode/agents/` and are discovered by OpenCode V2 as native agent files. When using this repo as a plugin from another project, copy or symlink those agent files into that project's `.opencode/agents/`; the V2 plugin API cannot add new agents.
 
 ## Pi
 

@@ -1,7 +1,7 @@
 /**
  * Matt Pocock Skills — OpenCode V2 plugin.
  *
- * Registers the promoted skills, agents, and commands shipped by this repo.
+ * Registers the promoted skills shipped by this repo.
  */
 
 import fs from 'node:fs';
@@ -80,25 +80,6 @@ const markdownFiles = (directory) => {
     .sort();
 };
 
-const parseArguments = (value) => {
-  const args = [];
-  const pattern = /"([^"]*)"|'([^']*)'|(\S+)/g;
-  for (const match of value.matchAll(pattern)) args.push(match[1] ?? match[2] ?? match[3]);
-  return args;
-};
-
-const expandCommand = (template, rawArguments) => {
-  const args = parseArguments(rawArguments);
-  let usedArguments = false;
-  let result = template.replace(/\$ARGUMENTS|\$(\d+)/g, (placeholder, position) => {
-    usedArguments = true;
-    return position ? (args[Number(position) - 1] || '') : rawArguments;
-  });
-
-  if (args.length && !usedArguments) result += `\n\n${rawArguments}`;
-  return result;
-};
-
 const registerSkills = async (ctx) => {
   const skillRoots = [
     resolveRootPath('skills/engineering'),
@@ -127,39 +108,9 @@ const registerSkills = async (ctx) => {
   });
 };
 
-const registerCommands = async (ctx) => {
-  const commandsDirectory = resolveRootPath('command');
-  const files = fs.existsSync(commandsDirectory)
-    ? fs.readdirSync(commandsDirectory).filter((file) => file.endsWith('.md')).sort()
-    : [];
-  const commands = files.map((file) => {
-    const name = path.basename(file, '.md');
-    const source = fs.readFileSync(path.join(commandsDirectory, file), 'utf8');
-    return { name, ...extractFrontmatter(source) };
-  });
-
-  await ctx.command.transform((editor) => {
-    for (const { name, frontmatter, body } of commands) {
-      editor.add({
-        name,
-        description: frontmatter.description || '',
-        async execute({ sessionID, prompt, delivery }) {
-          await ctx.session.prompt({
-            ...prompt,
-            sessionID,
-            text: expandCommand(body, prompt.text || ''),
-            delivery,
-          });
-        },
-      });
-    }
-  });
-};
-
 export default Plugin.define({
   id: 'mattpocock.skills',
   async setup(ctx) {
     await registerSkills(ctx);
-    await registerCommands(ctx);
   },
 });
